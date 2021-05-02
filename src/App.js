@@ -7,15 +7,16 @@ import {
   Switch,
   Route
 } from "react-router-dom";
+import CartPage from "./components/CartPage";
 
 function App() {
   return (
     <Router>
-      <div className="bg-gray-500">
+      <div>
       <Navbar />
         <Switch>
           <Route path="/cart">
-            "Cart"
+            <CartPage/>
           </Route>
           <Route path="/">
           <HomePage />

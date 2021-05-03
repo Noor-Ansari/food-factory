@@ -3,42 +3,34 @@ import { connect } from "react-redux";
 import { addProducts } from "../../redux/actionCreators";
 import ProductItem from "../ProductItem";
 import firebase from "../../firebase/firestore";
+import ImageSlider from "../ImageSlider";
 
 function HomePage({ products, addProducts }) {
-
 	useEffect(() => {
-		const getTodos = () => {
-			firebase.db
-				.collection("product")
-				.get()
-				.then((querySnapshot) => {
-					let data = [];
-					querySnapshot.forEach((doc) => {
-						data.push(doc.data());
-          });
-          sessionStorage.setItem("products", JSON.stringify(products))
-          addProducts(data);
-				})
-				.catch((err) => {
-					console.log(err.message);
+		firebase.db
+			.collection("product")
+			.get()
+			.then((querySnapshot) => {
+				let data = [];
+				querySnapshot.forEach((doc) => {
+					data.push(doc.data());
 				});
-		};
-		getTodos();
+				addProducts(data);
+			})
+			.catch((err) => {
+				console.log(err.message);
+			});
 	}, []);
 
 	return (
-		<div className='flex flex-wrap justify-center'>
+		<>
+		<ImageSlider />
+		<div className='flex flex-wrap justify-center my-24 px-4'>
 			{products.map((product) => (
-				<ProductItem
-					key={product.id}
-					name={product.name}
-					description={product.description}
-					image={product.image}
-					price={product.price}
-					stocks={product.stocks}
-				/>
+				<ProductItem key={product.id} product={product} />
 			))}
-		</div>
+			</div>
+			</>
 	);
 }
 

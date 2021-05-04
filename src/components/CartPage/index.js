@@ -2,26 +2,25 @@ import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import CartItem from "../CartItem";
 import CartSummary from "../CartSummary";
+import { Link } from "react-router-dom";
+
+const getTotal = (cart) => {
+	const productsTotal = cart.map((item) => item.quantity * item.price);
+	const grandTotal = productsTotal.reduce((total, current) => total + current);
+	return grandTotal;
+};
+
+const getTotalSavings = (cart) => {
+	const savingsTotal = cart.map((item) => item.savings);
+	const savingsGrandTotal = savingsTotal.reduce(
+		(total, current) => total + current
+	);
+	return savingsGrandTotal;
+};
 
 function CartPage({ cart }) {
 	sessionStorage.setItem("cart", JSON.stringify(cart));
 	const [isSoup, setIsSoup] = useState(false);
-
-	const getTotal = (cart) => {
-		const productsTotal = cart.map((item) => item.quantity * item.price);
-		const grandTotal = productsTotal.reduce(
-			(total, current) => total + current
-		);
-		return grandTotal;
-	};
-
-	const getTotalSavings = (cart) => {
-		const savingsTotal = cart.map((item) => item.savings);
-		const savingsGrandTotal = savingsTotal.reduce(
-			(total, current) => total + current
-		);
-		return savingsGrandTotal;
-	};
 
 	useEffect(() => {
 		cart.map((item) => {
@@ -31,21 +30,39 @@ function CartPage({ cart }) {
 		});
 	}, []);
 
+	const sortedCart = cart.sort((a, b) => b.addedAt - a.addedAt);
+
 	return (
-		<main className='flex justify-evenly my-24'>
-			<div className='ml-12 divide-y-2 w-1/2'>
-				<div className='h-12 bg-white flex items-center p-4 text-xl font-semibold'>
-					Your Cart : ({cart.length})
-				</div>
-				{cart.map((item) => (
-					<CartItem item={item} key={item.addedAt} isSoup={isSoup} />
-				))}
-			</div>
-			<CartSummary
-				totalPrice={getTotal(cart)}
-				totalSavings={getTotalSavings(cart)}
-			/>
-		</main>
+		<>
+			{sortedCart.length ? (
+				<main className='flex flex-col sm:flex-row justify-evenly my-16 sm:my-24'>
+					<div className='divide-y-2 w-full sm:w-1/2'>
+						<div className='bg-gray-600 text-white my-auto py-2 px-4 text-xl font-semibold'>
+							Your Cart : ({sortedCart.length})
+						</div>
+						{sortedCart.map((item) => (
+							<CartItem item={item} key={item.addedAt} isSoup={isSoup} />
+						))}
+					</div>
+					<CartSummary
+						totalPrice={getTotal(sortedCart)}
+						totalSavings={getTotalSavings(sortedCart)}
+					/>
+				</main>
+			) : (
+				<main className='flex flex-col items-center  justify-center my-64'>
+					<h1 className='text-xl sm:text-2xl mb-4 font-semibold'>
+						Your cart is empty...
+					</h1>
+					<Link
+						to='/'
+						className='text-sm bg-gray-700 hover:bg-gray-900 text-white py-1 px-2 rounded-md'
+					>
+						Go to home
+					</Link>
+				</main>
+			)}
+		</>
 	);
 }
 

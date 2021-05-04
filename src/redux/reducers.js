@@ -9,7 +9,6 @@ import {
 
 const initialState = {
 	products: [],
-	user: "",
 	cart: JSON.parse(sessionStorage.getItem("cart")) || [],
 };
 

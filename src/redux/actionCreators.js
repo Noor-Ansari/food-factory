@@ -45,6 +45,6 @@ export const decreaseQuantity = (id) => {
 export const updateSavings = (id, newSavings) => {
 	return {
 		type: UPDATE_SAVINGS,
-		payload : {id, newSavings}
-	}
-}
+		payload: { id, newSavings },
+	};
+};

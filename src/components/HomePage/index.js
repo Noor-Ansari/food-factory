@@ -1,11 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { addProducts } from "../../redux/actionCreators";
 import ProductItem from "../ProductItem";
 import firebase from "../../firebase/firestore";
 import ImageSlider from "../ImageSlider";
+import Loader from "react-loader-spinner";
 
 function HomePage({ products, addProducts }) {
+	const [isLoading, setIsLoading] = useState(true);
 	useEffect(() => {
 		firebase.db
 			.collection("product")
@@ -16,6 +18,7 @@ function HomePage({ products, addProducts }) {
 					data.push(doc.data());
 				});
 				addProducts(data);
+				setIsLoading(false);
 			})
 			.catch((err) => {
 				console.log(err.message);
@@ -23,14 +26,24 @@ function HomePage({ products, addProducts }) {
 	}, []);
 
 	return (
-		<>
-		<ImageSlider />
-		<div className='flex flex-wrap justify-center my-24 px-4'>
-			{products.map((product) => (
-				<ProductItem key={product.id} product={product} />
-			))}
-			</div>
-			</>
+		<main className='flex flex-col'>
+			{isLoading ? (
+				<Loader
+					className='self-center mt-56 sm:mt-64'
+					type='Oval'
+					color='#4B5563'
+				/>
+			) : (
+				<>
+					<ImageSlider />
+					<div className='flex flex-wrap justify-center my-12 px-2'>
+						{products.map((product) => (
+							<ProductItem key={product.id} product={product} />
+						))}
+					</div>
+				</>
+			)}
+		</main>
 	);
 }
 

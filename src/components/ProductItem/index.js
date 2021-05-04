@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { addToCart } from "../../redux/actionCreators";
 import { connect } from "react-redux";
 
 function ProductItem({ product, addToCart }) {
 	const { name, price, description, image, stocks } = product;
+	
 	const handleClick = () => {
 		addToCart({
 			id: name,

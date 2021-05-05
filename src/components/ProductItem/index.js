@@ -2,10 +2,12 @@ import React from "react";
 import { addToCart } from "../../redux/actionCreators";
 import { connect } from "react-redux";
 
-function ProductItem({ product, addToCart }) {
+function ProductItem({ product, addToCart, setShowModal, setItemName }) {
 	const { name, price, description, image, stocks } = product;
-	
+
 	const handleClick = () => {
+		setItemName(name);
+		setShowModal(true);
 		addToCart({
 			id: name,
 			name: name,

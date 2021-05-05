@@ -5,9 +5,13 @@ import ProductItem from "../ProductItem";
 import firebase from "../../firebase/firestore";
 import ImageSlider from "../ImageSlider";
 import Loader from "react-loader-spinner";
+import Modal from "../Modal";
 
 function HomePage({ products, addProducts }) {
 	const [isLoading, setIsLoading] = useState(true);
+	const [showModal, setShowModal] = useState(false);
+	const [itemName, setItemName] = useState("Item");
+
 	useEffect(() => {
 		firebase.db
 			.collection("product")
@@ -35,10 +39,18 @@ function HomePage({ products, addProducts }) {
 				/>
 			) : (
 				<>
+					{showModal && (
+						<Modal setShowModal={setShowModal} itemName={itemName} />
+					)}
 					<ImageSlider />
 					<div className='flex flex-wrap justify-center my-12 px-2'>
 						{products.map((product) => (
-							<ProductItem key={product.id} product={product} />
+							<ProductItem
+								key={product.id}
+								product={product}
+								setShowModal={setShowModal}
+								setItemName={setItemName}
+							/>
 						))}
 					</div>
 				</>

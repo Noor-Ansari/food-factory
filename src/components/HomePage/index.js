@@ -1,20 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { addProducts } from "../../redux/actionCreators";
+import { addProducts, setLoader } from "../../redux/actionCreators";
 import ProductItem from "../ProductItem";
-import firebase from "../../firebase/firestore";
+import db from "../../firebase/firestore";
 import ImageSlider from "../ImageSlider";
-import Loader from "react-loader-spinner";
+import CustomerLoader from "../Loader";
 import Modal from "../Modal";
 
-function HomePage({ products, addProducts }) {
-	const [isLoading, setIsLoading] = useState(true);
-	const [showModal, setShowModal] = useState(false);
-	const [itemName, setItemName] = useState("Item");
-
+function HomePage({ products, addProducts, modal, loader, setLoader }) {
 	useEffect(() => {
-		firebase.db
-			.collection("product")
+		setLoader(true);
+		db.collection("product")
 			.get()
 			.then((querySnapshot) => {
 				let data = [];
@@ -22,7 +18,7 @@ function HomePage({ products, addProducts }) {
 					data.push(doc.data());
 				});
 				addProducts(data);
-				setIsLoading(false);
+				setLoader(false);
 			})
 			.catch((err) => {
 				console.log(err.message);
@@ -30,44 +26,36 @@ function HomePage({ products, addProducts }) {
 	}, []);
 
 	return (
-		<main className='flex flex-col'>
-			{isLoading ? (
-				<Loader
-					className='self-center mt-56 sm:mt-64'
-					type='Oval'
-					color='#4B5563'
-				/>
+		<>
+			{loader ? (
+				<CustomerLoader />
 			) : (
 				<>
-					{showModal && (
-						<Modal setShowModal={setShowModal} itemName={itemName} />
-					)}
+					{modal && <Modal />}
 					<ImageSlider />
 					<div className='flex flex-wrap justify-center my-12 px-2'>
 						{products.map((product) => (
-							<ProductItem
-								key={product.id}
-								product={product}
-								setShowModal={setShowModal}
-								setItemName={setItemName}
-							/>
+							<ProductItem key={product.id} product={product} />
 						))}
 					</div>
 				</>
 			)}
-		</main>
+		</>
 	);
 }
 
 const mapStateToProps = (state) => {
 	return {
-		products: state.products,
+		products: state.productReducer.products,
+		modal: state.modalReducer.modal,
+		loader: state.modalReducer.loader,
 	};
 };
 
 const mapDispatchToProps = (dispatch) => {
 	return {
 		addProducts: (products) => dispatch(addProducts(products)),
+		setLoader: (state) => dispatch(setLoader(state)),
 	};
 };
 

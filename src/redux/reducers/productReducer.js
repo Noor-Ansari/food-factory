@@ -5,14 +5,14 @@ import {
 	INCREASE_QUANTITY,
 	REMOVE_FROM_CART,
 	UPDATE_SAVINGS,
-} from "./constants";
+} from "../constants";
 
 const initialState = {
 	products: [],
 	cart: JSON.parse(sessionStorage.getItem("cart")) || [],
 };
 
-const rootReducer = (state = initialState, action) => {
+const productReducer = (state = initialState, action) => {
 	switch (action.type) {
 		case ADD_PRODUCTS:
 			return {
@@ -80,4 +80,4 @@ const rootReducer = (state = initialState, action) => {
 	}
 };
 
-export default rootReducer;
+export default productReducer;

@@ -68,7 +68,7 @@ function CartPage({ cart }) {
 
 const mapStateToProps = (state) => {
 	return {
-		cart: state.cart,
+		cart: state.productReducer.cart,
 	};
 };
 

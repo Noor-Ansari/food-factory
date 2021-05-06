@@ -1,13 +1,13 @@
 import React from "react";
-import { addToCart } from "../../redux/actionCreators";
+import { addToCart, setModalText, setModal } from "../../redux/actionCreators";
 import { connect } from "react-redux";
 
-function ProductItem({ product, addToCart, setShowModal, setItemName }) {
+function ProductItem({ product, addToCart, setModal, setModalText }) {
 	const { name, price, description, image, stocks } = product;
 
 	const handleClick = () => {
-		setItemName(name);
-		setShowModal(true);
+		setModalText(`${name} added to cart`);
+		setModal(true);
 		addToCart({
 			id: name,
 			name: name,
@@ -54,6 +54,8 @@ function ProductItem({ product, addToCart, setShowModal, setItemName }) {
 const mapDispatchToProps = (dispatch) => {
 	return {
 		addToCart: (item) => dispatch(addToCart(item)),
+		setModalText: (modalText) => dispatch(setModalText(modalText)),
+		setModal : (state) => dispatch(setModal(state))
 	};
 };
 

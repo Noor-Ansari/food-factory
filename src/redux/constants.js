@@ -1,11 +1,8 @@
 export const ADD_PRODUCTS = "ADD_PRODUCTS";
-export const ADD_TO_CART = "ADD_TO_CART";
+export const UPDATE_CART = "UPDATE_CART";
 export const REMOVE_FROM_CART = "REMOVE_FROM_CART";
-export const INCREASE_QUANTITY = "INCREASE_QUANTITY";
-export const DECREASE_QUANTITY = "DECREASE_QUANTITY";
-export const UPDATE_SAVINGS = "UPDATE_SAVINGS";
 export const ADD_USER = "ADD_USER";
 export const REMOVE_USER = "REMOVE_USER";
-export const SET_MODAL = "SHOW_MODAL";
+export const SET_MODAL = "SET_MODAL";
 export const SET_MODAL_TEXT = "SET_MODAL_TEXT";
 export const SET_LOADER = "SET_LOADER";

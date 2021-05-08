@@ -2,11 +2,11 @@ import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useHistory, Link } from "react-router-dom";
-import db from "../../firebase/firestore";
-import firebase from "firebase";
 import { connect } from "react-redux";
-import { setModalText, setModal } from "../../redux/actionCreators";
+import { setModalText, setModal, setLoader } from "../../redux/actionCreators";
 import Modal from "../Modal";
+import CustomLoader from "../Loader";
+import { registerWithEmailAndPassword } from "./RegisterLogic";
 
 const initialValues = {
 	firstName: "",
@@ -30,51 +30,47 @@ const validationSchema = Yup.object({
 	password: Yup.string().trim().min(5, "Too short").required("Required"),
 });
 
-function RegisterForm({ modal, setModal, setModalText }) {
+function RegisterForm({ modal, setModal, setModalText, loader, setLoader }) {
 	const history = useHistory();
 
-	const onSubmit = (values) => {
-		const { firstName, lastName, email, password } = values;
-		firebase
-			.auth()
-			.createUserWithEmailAndPassword(email, password)
-			.then((userCredential) => {
-				const userId = userCredential.user.uid;
-				db.collection("user")
-					.add({
-						firstName: firstName,
-						lastName: lastName,
-						email: email,
-						userId: userId,
-					})
-					.then((response) => {
-						history.push("/login");
-					})
-					.catch((error) => {
-						console.log(error);
-					});
-			})
-			.catch((error) => {
-				setModalText("Email already exists");
-				setModal(true);
-			});
+	const onSubmit = async ({ firstName, lastName, email, password }) => {
+		setLoader(true);
+		const user = await registerWithEmailAndPassword(
+			firstName,
+			lastName,
+			email,
+			password
+		);
+		if (user) {
+			setLoader(false);
+			history.push("/login");
+		} else {
+			setModalText("Email already exists");
+			setModal(true);
+			setLoader(false);
+		}
 	};
 
 	return (
 		<>
 			{modal && <Modal />}
+			{loader && <CustomLoader />}
 			<main className='h-screen w-full flex items-center justify-between'>
 				<div className='shadow-lg mx-6 md:mx-auto w-full md:w-80 h-auto py-8 px-6 ring-gray-500 ring-4 mt-12 flex flex-col items-center justify-center relative rounded'>
-				<div className="absolute -top-6 bg-gray-500 py-2 px-6 rounded">
-					<img src="images/logo.jpeg" alt="logo" className="w-12 h-12 mx-auto" />
-					<h2 className="text-lg text-white">Welcome to food factory</h2>
+					<div className='absolute -top-6 bg-gray-500 py-2 px-6 rounded'>
+						<img
+							src='images/logo.jpeg'
+							alt='logo'
+							className='w-12 h-12 mx-auto'
+						/>
+						<h2 className='text-lg text-white'>Welcome to food factory</h2>
 					</div>
 					<Formik
 						initialValues={initialValues}
 						onSubmit={onSubmit}
 						validationSchema={validationSchema}
 					>
-						<Form className="w-full mt-12">
+						<Form className='w-full mt-12'>
 							<div className='my-2'>
 								<label
 									htmlFor='firstName'
@@ -168,12 +164,14 @@ const mapDispatchToProps = (dispatch) => {
 	return {
 		setModal: (state) => dispatch(setModal(state)),
 		setModalText: (modalText) => dispatch(setModalText(modalText)),
+		setLoader: (state) => dispatch(setLoader(state)),
 	};
 };
 
 const mapStateToProps = (state) => {
 	return {
 		modal: state.modalReducer.modal,
+		loader: state.modalReducer.loader,
 	};
 };
 

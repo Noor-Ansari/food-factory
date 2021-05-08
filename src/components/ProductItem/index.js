@@ -1,23 +1,26 @@
 import React from "react";
-import { addToCart, setModalText, setModal } from "../../redux/actionCreators";
+import { setModalText, setModal, updateCart } from "../../redux/actionCreators";
 import { connect } from "react-redux";
+import { addItemToCart } from "./Logic";
 
-function ProductItem({ product, addToCart, setModal, setModalText }) {
+function ProductItem({ user, product, updateCart, setModal, setModalText }) {
 	const { name, price, description, image, stocks } = product;
 
-	const handleClick = () => {
-		setModalText(`${name} added to cart`);
-		setModal(true);
-		addToCart({
-			id: name,
-			name: name,
-			price: price,
-			description: description,
-			image: image,
-			quantity: 1,
-			savings: 0,
-			addedAt: Date.now(),
-		});
+	const handleClick = async () => {
+		if (user) {
+			const updatedData = await addItemToCart(name, price, image, user.userId);
+			if (updatedData) {
+				updateCart(updatedData.cart);
+				setModalText(`${name} added to cart`);
+				setModal(true);
+			} else {
+				setModalText("Somethig went wrong/");
+				setModal(true);
+			}
+		} else {
+			setModalText("Login to add the items");
+			setModal(true);
+		}
 	};
 
 	return (
@@ -53,10 +56,16 @@ function ProductItem({ product, addToCart, setModal, setModalText }) {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		addToCart: (item) => dispatch(addToCart(item)),
+		updateCart: (newCart) => dispatch(updateCart(newCart)),
 		setModalText: (modalText) => dispatch(setModalText(modalText)),
-		setModal : (state) => dispatch(setModal(state))
+		setModal: (state) => dispatch(setModal(state)),
 	};
 };
 
-export default connect(null, mapDispatchToProps)(ProductItem);
+const mapStateToProps = (state) => {
+	return {
+		user: state.userReducer.user,
+	};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProductItem);

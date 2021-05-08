@@ -10,7 +10,7 @@ import Modal from "../Modal";
 function HomePage({ products, addProducts, modal, loader, setLoader }) {
 	useEffect(() => {
 		setLoader(true);
-		db.collection("product")
+		db.collection("products")
 			.get()
 			.then((querySnapshot) => {
 				let data = [];

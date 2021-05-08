@@ -1,50 +1,80 @@
 import React, { useEffect } from "react";
-import {
-	increaseQuantity,
-	decreaseQuantity,
-	removeFromCart,
-	updateSavings,
-} from "../../redux/actionCreators";
+import { updateCart } from "../../redux/actionCreators";
 import { connect } from "react-redux";
+import {
+	increaseItemQuantity,
+	decreaseItemQuantity,
+	removeItem,
+	updateItemSaving,
+} from "./Logic";
 
-function CartItem({
-	item,
-	increaseQuantity,
-	decreaseQuantity,
-	removeFromCart,
-	updateSavings,
-	isSoup,
-}) {
-	const { id, name, image, price, quantity, savings } = item;
+function CartItem({ item, user, updateCart, isSoup }) {
+	const { name, image, price, quantity, savings } = item;
 
-	useEffect(() => {
+	useEffect(async () => {
 		if (name === "Bread") {
 			if (quantity % 2 === 0 && isSoup) {
-				updateSavings(id, price * Math.trunc(quantity / 2));
+				const updatedData = await updateItemSaving(
+					name,
+					user.userId,
+					price * Math.trunc(quantity / 2)
+				);
+				if (updatedData) {
+					updateCart(updatedData.cart);
+				}
 			} else if (quantity < 2 || !isSoup) {
-				updateSavings(id, 0);
-			}
-		} else if (name === "Cheese") {
-			if (quantity % 4 === 0) {
-				updateSavings(id, 2 * price * Math.trunc(quantity / 4));
-			} else if (quantity % 3 === 0) {
-				updateSavings(id, price * Math.trunc(quantity / 3));
-			} else if (quantity < 3) {
-				updateSavings(id, 0);
+				const updatedData = await updateItemSaving(name, user.userId, 0);
+				if (updatedData) {
+					updateCart(updatedData.cart);
+				}
+			} else if (name === "Cheese") {
+				if (quantity % 4 === 0) {
+					const updatedData = await updateItemSaving(
+						name,
+						user.userId,
+						2 * price * Math.trunc(quantity / 4)
+					);
+					if (updatedData) {
+						updateCart(updatedData.cart);
+					}
+				} else if (quantity % 3 === 0) {
+					const updatedData = await updateItemSaving(
+						name,
+						user.userId,
+						price * Math.trunc(quantity / 3)
+					);
+					if (updatedData) {
+						updateCart(updatedData.cart);
+					}
+				} else if (quantity < 3) {
+					const updatedData = await updateItemSaving(name, user.userId, 0);
+					if (updatedData) {
+						updateCart(updatedData.cart);
+					}
+				}
 			}
 		}
 	}, [quantity, isSoup]);
 
-	const handleIncreaseClick = () => {
-		increaseQuantity(id);
+	const handleIncreaseClick = async () => {
+		const updatedData = await increaseItemQuantity(user.userId, name);
+		if (updatedData) {
+			updateCart(updatedData.cart);
+		}
 	};
 
-	const handleDecreaseClick = () => {
-		decreaseQuantity(id);
-	};
-
-	const handleRemoveClick = () => {
-		removeFromCart(id);
+	const handleDecreaseClick = async () => {
+		if (quantity > 1) {
+			const updatedData = await decreaseItemQuantity(user.userId, name);
+			if (updatedData) {
+				updateCart(updatedData.cart);
+			}
+		} else {
+			const updatedData = await removeItem(user.userId, name);
+			if (updatedData) {
+				updateCart(updatedData.cart);
+			}
+		}
 	};
 
 	return (
@@ -59,7 +89,7 @@ function CartItem({
 				<p className='text-sm'>Price : € {price.toFixed(2)}</p>
 				<div className='flex w-20 justify-between items-center my-4'>
 					<button
-						onClick={quantity > 1 ? handleDecreaseClick : handleRemoveClick}
+						onClick={handleDecreaseClick}
 						className='bg-gray-200 font-semibold hover:bg-gray-300 rounded-full h-6 w-6 flex justify-center items-center focus:outline-none'
 					>
 						-
@@ -90,11 +120,14 @@ function CartItem({
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		increaseQuantity: (id) => dispatch(increaseQuantity(id)),
-		decreaseQuantity: (id) => dispatch(decreaseQuantity(id)),
-		removeFromCart: (id) => dispatch(removeFromCart(id)),
-		updateSavings: (id, newSavings) => dispatch(updateSavings(id, newSavings)),
+		updateCart: (newCart) => dispatch(updateCart(newCart)),
 	};
 };
 
-export default connect(null, mapDispatchToProps)(CartItem);
+const mapStateToProps = (state) => {
+	return {
+		user: state.userReducer.user,
+	};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CartItem);

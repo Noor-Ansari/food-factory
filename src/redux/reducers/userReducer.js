@@ -1,7 +1,8 @@
-import { ADD_USER, REMOVE_USER } from "../constants";
+import { ADD_USER, REMOVE_USER, UPDATE_CART } from "../constants";
 
 const initialState = {
-	user: "",
+	user: JSON.parse(sessionStorage.getItem("user")) || "",
+	cart: [],
 };
 
 const userReducer = (state = initialState, action) => {
@@ -10,11 +11,17 @@ const userReducer = (state = initialState, action) => {
 			return {
 				...state,
 				user: action.payload,
+				cart: action.payload.cart,
 			};
 		case REMOVE_USER:
 			return {
 				...state,
-				user: action.payload,
+				cart: action.payload,
+			};
+		case UPDATE_CART:
+			return {
+				...state,
+				cart: action.payload,
 			};
 		default:
 			return state;

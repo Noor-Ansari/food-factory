@@ -1,17 +1,4 @@
-import db from "../../firebase/firestore";
-import { fetchUserData } from "../Login/LoginLogic";
-
-export const updateUserCart = async (docId, newCart) => {
-	try {
-		const res = await db
-			.collection("users")
-			.doc(docId)
-			.update({ cart: newCart });
-		return 1;
-	} catch (error) {
-		return 0;
-	}
-};
+import { fetchUserData, updateUserCart } from "../../helpers/userHelpers";
 
 export const addItemToCart = async (name, price, image, userId) => {
 	const { userData, docId } = await fetchUserData(userId);

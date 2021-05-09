@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { setModalText, setModal, setLoader } from "../../redux/actionCreators";
 import Modal from "../Modal";
 import CustomLoader from "../Loader";
-import { registerWithEmailAndPassword } from "./RegisterLogic";
+import { registerWithEmailAndPassword } from "./Logic";
 
 const initialValues = {
 	firstName: "",

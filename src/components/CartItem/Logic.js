@@ -1,5 +1,4 @@
-import { fetchUserData } from "../Login/LoginLogic";
-import { updateUserCart } from "../ProductItem/Logic";
+import { updateUserCart, fetchUserData } from "../../helpers/userHelpers";
 
 export const increaseItemQuantity = async (userId, name) => {
 	const { userData, docId } = await fetchUserData(userId);

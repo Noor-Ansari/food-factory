@@ -11,7 +11,7 @@ import {
 import { connect } from "react-redux";
 import Modal from "../Modal";
 import CustomLoader from "../Loader";
-import { loginWithEmailAndPassword } from "./LoginLogic";
+import { loginWithEmailAndPassword } from "./Logic";
 
 const initialValues = {
 	email: "",

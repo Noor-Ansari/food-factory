@@ -4,7 +4,7 @@ import { FaChevronLeft } from "react-icons/fa";
 import sliderData from "./sliderData";
 
 function ImageSlider() {
-	const [current, setCurrent] = useState(3);
+	const [current, setCurrent] = useState(0);
 
 	const handlePrev = () => {
 		setCurrent((current) =>

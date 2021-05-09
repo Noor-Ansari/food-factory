@@ -16,7 +16,8 @@ const userReducer = (state = initialState, action) => {
 		case REMOVE_USER:
 			return {
 				...state,
-				cart: action.payload,
+				user: action.payload,
+				cart: [],
 			};
 		case UPDATE_CART:
 			return {

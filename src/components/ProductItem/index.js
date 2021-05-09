@@ -14,7 +14,7 @@ function ProductItem({ user, product, updateCart, setModal, setModalText }) {
 				setModalText(`${name} added to cart`);
 				setModal(true);
 			} else {
-				setModalText("Somethig went wrong/");
+				setModalText("Somethig went wrong");
 				setModal(true);
 			}
 		} else {

@@ -22,12 +22,7 @@ export const registerWithEmailAndPassword = async (
 		const userCredential = await firebase
 			.auth()
 			.createUserWithEmailAndPassword(email, password);
-		const response = await saveUserData(
-			firstName,
-			lastName,
-			email,
-			userCredential.user.uid
-		);
+		await saveUserData(firstName, lastName, email, userCredential.user.uid);
 		return 1;
 	} catch (error) {
 		return 0;

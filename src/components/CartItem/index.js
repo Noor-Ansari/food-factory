@@ -10,51 +10,54 @@ import {
 
 function CartItem({ item, user, updateCart, isSoup }) {
 	const { name, image, price, quantity, savings } = item;
-
-	useEffect(async () => {
-		if (name === "Bread") {
-			if (quantity % 2 === 0 && isSoup) {
-				const updatedData = await updateItemSaving(
-					name,
-					user.userId,
-					price * Math.trunc(quantity / 2)
-				);
-				if (updatedData) {
-					updateCart(updatedData.cart);
-				}
-			} else if (quantity < 2 || !isSoup) {
-				const updatedData = await updateItemSaving(name, user.userId, 0);
-				if (updatedData) {
-					updateCart(updatedData.cart);
-				}
-			} else if (name === "Cheese") {
-				if (quantity % 4 === 0) {
-					const updatedData = await updateItemSaving(
-						name,
-						user.userId,
-						2 * price * Math.trunc(quantity / 4)
-					);
-					if (updatedData) {
-						updateCart(updatedData.cart);
+	useEffect(() => {
+		(async () => {
+			if (user) {
+				if (name === "Bread") {
+					if (quantity % 2 === 0 && isSoup) {
+						const updatedData = await updateItemSaving(
+							name,
+							user.userId,
+							price * Math.trunc(quantity / 2)
+						);
+						if (updatedData) {
+							updateCart(updatedData.cart);
+						}
+					} else if (quantity < 2 || !isSoup) {
+						const updatedData = await updateItemSaving(name, user.userId, 0);
+						if (updatedData) {
+							updateCart(updatedData.cart);
+						}
 					}
-				} else if (quantity % 3 === 0) {
-					const updatedData = await updateItemSaving(
-						name,
-						user.userId,
-						price * Math.trunc(quantity / 3)
-					);
-					if (updatedData) {
-						updateCart(updatedData.cart);
-					}
-				} else if (quantity < 3) {
-					const updatedData = await updateItemSaving(name, user.userId, 0);
-					if (updatedData) {
-						updateCart(updatedData.cart);
+				} else if (name === "Cheese") {
+					if (quantity % 4 === 0) {
+						const updatedData = await updateItemSaving(
+							name,
+							user.userId,
+							2 * price * Math.trunc(quantity / 4)
+						);
+						if (updatedData) {
+							updateCart(updatedData.cart);
+						}
+					} else if (quantity % 3 === 0) {
+						const updatedData = await updateItemSaving(
+							name,
+							user.userId,
+							price * Math.trunc(quantity / 3)
+						);
+						if (updatedData) {
+							updateCart(updatedData.cart);
+						}
+					} else if (quantity < 3) {
+						const updatedData = await updateItemSaving(name, user.userId, 0);
+						if (updatedData) {
+							updateCart(updatedData.cart);
+						}
 					}
 				}
 			}
-		}
-	}, [quantity, isSoup]);
+		})();
+	}, [quantity, isSoup, item]);
 
 	const handleIncreaseClick = async () => {
 		const updatedData = await increaseItemQuantity(user.userId, name);

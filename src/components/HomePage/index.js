@@ -1,28 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { addProducts, setLoader } from "../../redux/actionCreators";
 import ProductItem from "../ProductItem";
-import db from "../../firebase/firestore";
 import ImageSlider from "../ImageSlider";
 import CustomerLoader from "../Loader";
 import Modal from "../Modal";
+import { fetchProductsData } from "./Logic";
 
 function HomePage({ products, addProducts, modal, loader, setLoader }) {
 	useEffect(() => {
-		setLoader(true);
-		db.collection("products")
-			.get()
-			.then((querySnapshot) => {
-				let data = [];
-				querySnapshot.forEach((doc) => {
-					data.push(doc.data());
-				});
-				addProducts(data);
+		(async () => {
+			setLoader(true);
+			const productsData = await fetchProductsData();
+			if (productsData) {
+				addProducts(productsData);
 				setLoader(false);
-			})
-			.catch((err) => {
-				console.log(err.message);
-			});
+			}
+		})();
 	}, []);
 
 	return (
@@ -35,7 +29,7 @@ function HomePage({ products, addProducts, modal, loader, setLoader }) {
 					<ImageSlider />
 					<div className='flex flex-wrap justify-center my-12 px-2'>
 						{products.map((product) => (
-							<ProductItem key={product.id} product={product} />
+							<ProductItem key={product.name} product={product} />
 						))}
 					</div>
 				</>

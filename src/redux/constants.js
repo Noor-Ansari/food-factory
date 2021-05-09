@@ -1,6 +1,5 @@
 export const ADD_PRODUCTS = "ADD_PRODUCTS";
 export const UPDATE_CART = "UPDATE_CART";
-export const REMOVE_FROM_CART = "REMOVE_FROM_CART";
 export const ADD_USER = "ADD_USER";
 export const REMOVE_USER = "REMOVE_USER";
 export const SET_MODAL = "SET_MODAL";

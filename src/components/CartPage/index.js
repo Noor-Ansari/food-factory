@@ -3,37 +3,26 @@ import { connect } from "react-redux";
 import CartItem from "../CartItem";
 import CartSummary from "../CartSummary";
 import { Link } from "react-router-dom";
-import { fetchUserData } from "../Login/LoginLogic";
+import { fetchUserData } from "../../helpers/userHelpers";
 import { updateCart } from "../../redux/actionCreators";
-
-const getTotal = (cart) => {
-	const productsTotal = cart.map((item) => item.quantity * item.price);
-	const grandTotal = productsTotal.reduce((total, current) => total + current);
-	return grandTotal;
-};
-
-const getTotalSavings = (cart) => {
-	const savingsTotal = cart.map((item) => item.savings);
-	const savingsGrandTotal = savingsTotal.reduce(
-		(total, current) => total + current
-	);
-	return savingsGrandTotal;
-};
+import { getTotal, getTotalSavings } from "./Logic";
 
 function CartPage({ cart, user, updateCart }) {
 	const [isSoup, setIsSoup] = useState(false);
-	useEffect(async () => {
-		cart.map((item) => {
-			if (item.name === "Soup") {
-				setIsSoup(true);
+	useEffect(() => {
+		(async () => {
+			cart.map((item) => {
+				if (item.name === "Soup") {
+					setIsSoup(true);
+				}
+			});
+			if (user) {
+				const { userData } = await fetchUserData(user.userId);
+				if (userData.cart) {
+					updateCart(userData.cart);
+				}
 			}
-		});
-		if (user) {
-			const { userData } = await fetchUserData(user.userId);
-			if (userData.cart) {
-				updateCart(userData.cart);
-			}
-		}
+		})();
 	}, []);
 
 	const sortedCart = cart.sort((a, b) => b.addedAt - a.addedAt);
